@@ -1,0 +1,36 @@
+[project]
+authors = [{name = "Maximilian Linhoff", email = "maximilian.linhoff@posteo.de"}]
+dependencies = [
+  "ctapipe >=0.33",
+  "fzreader @ git+https://github.com/maxnoe/pyfzreader@pyproject"
+]
+name = "ctapipe_io_whipple"
+requires-python = ">=3.12"
+version = "0.1.0"
+
+[project.entry-points.ctapipe_io]
+WhippleEventSource = "ctapipe_io_whipple:WhippleEventSource"
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=77"]
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-dependencies]
+ctapipe_io_whipple = { path = ".", editable = true }
+
+[tool.pixi.tasks]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+]

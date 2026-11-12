@@ -4,3 +4,4 @@ This repository implements a ctapipe_io EventSource plugin.
 - ctapipe >= 0.33
 - Dataset described at https://zenodo.org/records/16890876
 - python reader for the data format: https://github.com/Whipple10m/pyfzreader
+- ctapipe ``CameraGeometry`` should be created from the camera description file in pyfzreader
