@@ -27,8 +27,12 @@ platforms = ["linux-64"]
 
 [tool.pixi.pypi-dependencies]
 ctapipe_io_whipple = { path = ".", editable = true }
+fzreader = { git = "https://github.com/maxnoe/pyfzreader", rev = "pyproject" }
 
 [tool.pixi.tasks]
+
+[tool.pixi.dependencies]
+ctapipe = ">=0.33"
 
 [dependency-groups]
 dev = [
