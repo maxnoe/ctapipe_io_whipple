@@ -95,7 +95,7 @@ def _create_subarray(nadc):
         reflector_shape="DAVIES_COTTON",
         n_mirrors=1,
         equivalent_focal_length=FOCAL_LENGTH,
-        effective_focal_length=np.nan * u.m,
+        effective_focal_length=FOCAL_LENGTH,
         mirror_area=75 * u.m**2,
         n_mirror_tiles=248,
     )

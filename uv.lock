@@ -326,6 +326,11 @@ dependencies = [
     { name = "fzreader" },
 ]
 
+[package.optional-dependencies]
+test = [
+    { name = "pytest" },
+]
+
 [package.dev-dependencies]
 dev = [
     { name = "pytest" },
@@ -334,8 +339,10 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "ctapipe", specifier = ">=0.33" },
-    { name = "fzreader", git = "https://github.com/maxnoe/pyfzreader?rev=pyproject" },
+    { name = "fzreader", git = "https://github.com/Whipple10m/pyfzreader" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=8" },
 ]
+provides-extras = ["test"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest", specifier = ">=9.2.0" }]
@@ -374,7 +381,7 @@ wheels = [
 [[package]]
 name = "fzreader"
 version = "1.0.1"
-source = { git = "https://github.com/maxnoe/pyfzreader?rev=pyproject#4d028f3f88c729c2d63e60d6e92f2a1c76d983b9" }
+source = { git = "https://github.com/Whipple10m/pyfzreader#fd306dbe95e02d6024704fc6ad0ab24f37925bdf" }
 
 [[package]]
 name = "h11"

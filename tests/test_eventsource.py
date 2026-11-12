@@ -1,4 +1,5 @@
 """Unit tests use decoded records only; no archive access is needed."""
+from pathlib import Path
 
 from copy import deepcopy
 from importlib.metadata import entry_points
@@ -293,3 +294,32 @@ def test_local_data():
         with fzreader.FZReader(str(path)) as reader:
             first = next(r for r in reader if r.get("record_was_decoded") and r["record_type"] in ("event", "frame"))
         np.testing.assert_array_equal(events[0].tel[1].r0.waveform[0, :, 0], first["adc_values"][:geometry.n_pixels])
+
+
+def test_ctapipe_process(tmp_path):
+    from ctapipe.core.tool import run_tool
+    from ctapipe.tools.process import ProcessorTool
+    from ctapipe.io import TableLoader
+    
+    input_path = Path("tests/resources/gt027460.fz.xz").absolute()
+    output_path = tmp_path / "test.dl1.h5"
+
+    run_tool(
+        ProcessorTool(),
+        [
+            f"--input={input_path}",
+            "--CameraCalibrator.image_extractor_type=FullWaveformSum",
+            f"--output={output_path}",
+            "--max-events=1000",
+            "--log-level=INFO",
+            "--write-images",
+        ]
+    )
+
+    assert output_path.is_file()
+
+    with TableLoader(output_path) as f:
+        events = f.read_telescope_events(dl1_images=True, dl1_parameters=True)
+
+    assert len(events) == 1000
+    assert np.count_nonzero(np.isfinite(events["hillas_intensity"])) > 200
