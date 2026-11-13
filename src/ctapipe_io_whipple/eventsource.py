@@ -285,7 +285,10 @@ class WhippleEventSource(EventSource):
         if adc.shape != (self._nadc,):
             raise ValueError(f"Expected {self._nadc} ADC values, got shape {adc.shape}")
         is_frame = record["record_type"] == "frame"
-        event_id = (2**63 + int(record["frame_num"])) if is_frame else int(record["event_num"])
+        # Event and pedestal-frame counters overlap within a run. Set the high
+        # bit for frames to keep IDs unique while preserving ordinary event numbers.
+        # Use uint64 explicitly so HDF5 writes these IDs with an unsigned 64-bit dtype.
+        event_id = np.uint64((2**63 + int(record["frame_num"])) if is_frame else int(record["event_num"]))
         event_type = {
             "sky": EventType.SUBARRAY, "pedestal": EventType.SKY_PEDESTAL
         }.get(record.get("event_type"), EventType.UNKNOWN)
