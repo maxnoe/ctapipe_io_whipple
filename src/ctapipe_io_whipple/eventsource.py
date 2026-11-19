@@ -309,6 +309,7 @@ class WhippleEventSource(EventSource):
             r0=TelescopeR0Container(waveform=adc[:npix].copy()[None, :, None]),
             r1=TelescopeR1Container(
                 waveform=(adc[:npix].astype(np.float32) * self.dc_to_pe)[None, :, None],
+                selected_gain_channel=np.zeros(npix, dtype=np.int8),
                 event_type=event_type,
                 event_time=time,
                 pixel_status=np.full(npix, PixelStatus.HIGH_GAIN_STORED, dtype=np.uint8),

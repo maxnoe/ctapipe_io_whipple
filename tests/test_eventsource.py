@@ -128,6 +128,9 @@ def test_events(fake_file):
         assert len(list(source)) == 3
         for event in events:
             event.validate()
+            np.testing.assert_array_equal(
+                event.tel[1].r1.selected_gain_channel, np.zeros(109, dtype=np.int8),
+            )
     assert all(reader.closed for reader in readers)
     with pytest.raises(RuntimeError, match="closed"):
         list(source)
