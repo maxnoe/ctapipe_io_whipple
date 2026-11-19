@@ -5,7 +5,7 @@ from pathlib import Path
 import astropy.units as u
 import fzreader
 import numpy as np
-from astropy.coordinates import EarthLocation
+from astropy.coordinates import EarthLocation, SkyCoord
 from astropy.time import Time, TimeDelta
 from traitlets import TraitError, validate
 from ctapipe.containers import (
@@ -42,6 +42,8 @@ from ctapipe.instrument import (
     TelescopeDescription,
 )
 from ctapipe.io import DataLevel, EventSource
+from ctapipe import __version__ as ctapipe_version
+from packaging.version import Version
 
 __all__ = ["WhippleEventSource"]
 
@@ -75,15 +77,31 @@ def create_camera_geometry(nadc):
     camera = fzreader.get_camera_geometry_by_nadc(nadc)
     if camera is None or camera["nadc"] != nadc:
         raise ValueError(f"Unsupported Whipple camera with {nadc} ADC channels")
+
+    pix_x=np.asarray(camera["x"]) * u.deg
+    pix_y=np.asarray(camera["y"]) * u.deg
+    frame = TelescopeFrame()
+
+    kwargs = {}
+    if Version(ctapipe_version) > Version("0.32.0"):
+        kwargs["pix_coord"] = SkyCoord(
+            fov_lon=pix_x,
+            fov_lat=pix_y,
+            frame=frame,
+            focal_length=FOCAL_LENGTH,
+        )
+    else:
+        kwargs["pix_x"] = pix_x
+        kwargs["pix_y"] = pix_y
+        kwargs["frame"] = frame
+
     return CameraGeometry(
+        **kwargs,
         name=f"Whipple{camera['npix']}",
         pix_id=np.arange(camera["npix"]),
-        pix_x=np.asarray(camera["x"]) * u.deg,
-        pix_y=np.asarray(camera["y"]) * u.deg,
         pix_area=np.pi * (np.asarray(camera["r"]) * u.deg) ** 2,
         pix_type=PixelShape.CIRCLE,
         neighbors=camera["neighbors"],
-        frame=TelescopeFrame(),
     ).transform_to(CameraFrame(focal_length=FOCAL_LENGTH))
 
 
